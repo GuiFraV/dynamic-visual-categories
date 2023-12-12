@@ -1,0 +1,37 @@
+/* Styles for the custom dropdown menu */
+.custom-dropdown-gallery {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Styles for the image gallery container */
+.custom-gallery-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Individual image styles within the gallery */
+.custom-gallery-container img {
+    width: calc(33.333% - 10px); /* Three images per row, adjust as needed */
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .custom-gallery-container img {
+        width: calc(50% - 10px); /* Two images per row on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .custom-gallery-container img {
+        width: 100%; /* Single image per row on very small screens */
+    }
+}
