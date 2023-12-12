@@ -62,21 +62,16 @@ class Custom_Dropdown_Gallery_Widget extends Widget_Base {
     protected function render() {
         $settings = $this->get_settings_for_display();
 
-        if (!empty($settings['categories_list'])) {
-            echo '<select id="custom-dropdown-gallery" class="custom-dropdown-gallery">';
-            echo '<option value="">' . __('Select a Category', 'plugin-name') . '</option>';
-
-            foreach ($settings['categories_list'] as $category) {
-                echo '<option value="' . sanitize_title($category['category_name']) . '">' . esc_html($category['category_name']) . '</option>';
-            }
-
-            echo '</select>';
-            echo '<div id="custom-gallery-container" class="custom-gallery-container"></div>';
+        echo '<div class="categories-container">';
+        foreach ($settings['categories_list'] as $category) {
+            echo '<a href="#" class="category-item" data-category="' . esc_attr($category['category_name']) . '">' . esc_html($category['category_name']) . '</a>';
         }
+        echo '</div>';
+
+        echo '<div id="gallery-container" class="gallery-container"></div>';
     }
 
-    // Optional: Add content_template() method here if needed for live preview in Elementor editor
-
+    // Optional: Add content_template() method for live preview in Elementor editor
 }
 
 // Register the widget

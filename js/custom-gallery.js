@@ -1,22 +1,34 @@
 jQuery(document).ready(function($) {
-    $('#custom-dropdown-gallery').on('change', function() {
-        var selectedCategory = $(this).val();
+    console.log('Le script custom-gallery.js est chargé.');
 
-        // Make an AJAX call to the server
+    // Attacher l'événement click avec délégation sur un élément parent existant
+    // 'body' peut être remplacé par un autre conteneur plus spécifique si nécessaire
+    $('body').on('click', '.category-item', function(e) {
+        e.preventDefault(); // Empêcher la navigation par défaut du lien
+        console.log('Élément de catégorie cliqué.');
+
+        var selectedCategory = $(this).text();
+        console.log('Catégorie sélectionnée : ', selectedCategory);
+
+        // Envoyer une requête AJAX au serveur
         $.ajax({
-            url: ajax_object.ajax_url, // URL from localized script
+            url: ajax_object.ajax_url, // L'URL pour la requête AJAX
             type: 'POST',
             data: {
-                'action': 'load_gallery_by_category', // The AJAX action hook
-                'category': selectedCategory // The selected category
+                action: 'load_gallery_by_category', // L'action AJAX côté serveur
+                category: selectedCategory // La catégorie sélectionnée
+            },
+            beforeSend: function() {
+                console.log('Envoi de la requête AJAX pour la catégorie : ', selectedCategory);
             },
             success: function(response) {
-                // Populate the gallery container with the response
-                $('#custom-gallery-container').html(response);
+                // Mettre à jour le conteneur de la galerie avec la réponse
+                $('#gallery-container').html(response);
+                console.log('HTML de la galerie mis à jour.');
             },
-            error: function() {
-                // Handle errors
-                $('#custom-gallery-container').html('<p>Error loading gallery.</p>');
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Afficher un message d'erreur en cas d'échec de la requête
+                console.error('Erreur AJAX : ', textStatus, errorThrown);
             }
         });
     });

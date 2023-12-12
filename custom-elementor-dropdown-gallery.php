@@ -3,8 +3,14 @@
  * Plugin Name: Custom Elementor Dropdown Gallery
  * Description: Elementor widget for a dropdown menu displaying image galleries.
  * Version: 1.0
- * Author: GuiFraV
+ * Author: Your Name
  */
+
+define( 'WP_DEBUG', true );
+define( 'WP_DEBUG_LOG', true );
+define( 'WP_DEBUG_DISPLAY', false );
+@ini_set( 'display_errors', 0 );
+
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
@@ -34,21 +40,56 @@ add_action( 'wp_ajax_load_gallery_by_category', 'load_gallery_by_category' );
 add_action( 'wp_ajax_nopriv_load_gallery_by_category', 'load_gallery_by_category' );
 
 function load_gallery_by_category() {
+    error_log('Début du traitement AJAX pour charger la galerie.');
+
+    if ( ! isset( $_POST['category'] ) ) {
+        error_log('Erreur AJAX : Aucune catégorie n\'a été transmise.');
+        wp_die('Aucune catégorie n\'a été transmise.', 400); // Envoie une réponse 400 (Bad Request)
+    }
+
     $category = sanitize_text_field( $_POST['category'] );
+    error_log('Catégorie demandée : ' . $category);
 
-    // Retrieve images for the selected category
-    // Note: You will need to implement the logic to retrieve images based on the category
+    $images = get_images_by_category($category);
+    if ( empty( $images ) ) {
+        error_log('Aucune image trouvée pour la catégorie : ' . $category);
+        wp_die('Aucune image trouvée.', 404); // Envoie une réponse 404 (Not Found)
+    }
 
-    // Placeholder for gallery HTML
     $gallery_html = '<div class="image-gallery">';
-
-    // Example: Loop through images and add them to the gallery
-    // foreach ($images as $image) {
-    //     $gallery_html .= '<img src="' . esc_url($image['url']) . '" alt="' . esc_attr($image['alt']) . '">';
-    // }
-
+    foreach ($images as $image) {
+        $gallery_html .= '<img src="' . esc_url($image['url']) . '" alt="' . esc_attr($image['alt']) . '">';
+    }
     $gallery_html .= '</div>';
 
+    error_log('Galerie générée pour la catégorie : ' . $category);
     echo $gallery_html;
-    wp_die(); // this is required to terminate immediately and return a proper response
+    wp_die();
+}
+
+
+function custom_gallery_shortcode($atts) {
+    // Attributs du shortcode, si nécessaire
+    $atts = shortcode_atts( array(
+        'category' => '', // Exemple d'attribut pour filtrer par catégorie
+    ), $atts );
+
+    $category = $atts['category'];
+    $images = get_images_by_category($category); // Récupérez les images comme avant
+
+    $gallery_html = '<div class="image-gallery">';
+    foreach ($images as $image) {
+        $gallery_html .= '<img src="' . esc_url($image['url']) . '" alt="' . esc_attr($image['alt']) . '">';
+    }
+    $gallery_html .= '</div>';
+
+    return $gallery_html;
+}
+add_shortcode('custom_gallery', 'custom_gallery_shortcode');
+
+
+// Implémentez ici votre logique pour récupérer les images en fonction de la catégorie
+function get_images_by_category($category) {
+    // Votre code pour récupérer les images
+    return []; // Retourner un tableau d'images
 }
